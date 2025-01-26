@@ -1,9 +1,11 @@
 import os
+from threading import Thread
 import telebot
 from dotenv import load_dotenv
 import logging
 from telebot import types
-from models import create_task, get_task, get_all_tasks, update_task, get_all_open_tasks
+from models import create_task, get_task, get_all_open_tasks, create_user, get_user
+from apscheduler.schedulers.blocking import BlockingScheduler
 
 
 def main():
@@ -21,6 +23,7 @@ def main():
     @bot.message_handler(commands=['start'])
     def start_message(message):
         logging.info('Received /start command.')
+        create_user(message.from_user.username, message.from_user.first_name, message.from_user.last_name, message.from_user.id, message.chat.id)
         keyboard = types.InlineKeyboardMarkup()
         key_list = types.InlineKeyboardButton(text='/list', callback_data='list')
         keyboard.add(key_list)
@@ -134,6 +137,25 @@ def main():
             task(call.message)
         elif call.data == 'create':
             create(call.message)
+
+
+    def run_scheduled_task():
+        logging.info('Running scheduled task.')
+        tasks = get_all_open_tasks()
+        user = get_user(os.environ.get('MY_USERNAME'))
+        chat_id = user.chat_id
+        bot.send_message(chat_id, f'Напоминание: {len(tasks)} задач.')
+        for task in tasks:
+            bot.send_message(chat_id, f'{task}')
+
+    scheduler = BlockingScheduler(timezone='Europe/Moscow')
+    scheduler.add_job(run_scheduled_task, 'cron', hour=17, minute=45)
+    def schedule_checker():
+        logging.info('Scheduler started.')
+        while True:
+            scheduler.start()
+
+    Thread(target=schedule_checker).start()
 
     bot.polling(none_stop=True, interval=0)
 

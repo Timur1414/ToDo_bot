@@ -28,9 +28,36 @@ class Task(Base):
     def __str__(self):
         return f'{self.id} - {self.title}'
 
+class User(Base):
+    __tablename__ = 'users'
+
+    id = Column(Integer, primary_key=True, index=True)
+    username = Column(String)
+    first_name = Column(String)
+    last_name = Column(String)
+    telegram_id = Column(Integer)
+    chat_id = Column(Integer)
 
 engine = create_engine('sqlite:///db.sqlite3')
 Base.metadata.create_all(engine)
+
+def create_user(username: str, first_name: str, last_name: str, telegram_id: int, chat_id: int):
+    with Session(autoflush=False, bind=engine) as db:
+        user = User(
+            username=username,
+            first_name=first_name,
+            last_name=last_name,
+            telegram_id=telegram_id,
+            chat_id=chat_id
+        )
+        db.add(user)
+        db.commit()
+        logging.info('user created.')
+
+def get_user(username: str):
+    with Session(autoflush=False, bind=engine) as db:
+        logging.info(f'get user {username}.')
+        return db.query(User).filter(User.username == username).first()
 
 def create_task(title: str, description: str, start_time: datetime.datetime = None, end_time: datetime.datetime = None):
     with Session(autoflush=False, bind=engine) as db:
