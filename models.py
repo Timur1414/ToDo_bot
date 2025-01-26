@@ -54,7 +54,12 @@ def create_user(username: str, first_name: str, last_name: str, telegram_id: int
         db.commit()
         logging.info('user created.')
 
-def get_user(username: str):
+def is_user_in_db(username: str) -> bool:
+    with Session(autoflush=False, bind=engine) as db:
+        logging.info(f'check user {username} in db.')
+        return db.query(User).filter(User.username == username).count() > 0
+
+def get_user(username: str) -> Optional[Type[User]]:
     with Session(autoflush=False, bind=engine) as db:
         logging.info(f'get user {username}.')
         return db.query(User).filter(User.username == username).first()
