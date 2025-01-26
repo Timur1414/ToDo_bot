@@ -44,12 +44,12 @@ def create_task(title: str, description: str, start_time: datetime.datetime = No
         db.commit()
         logging.info('task created.')
 
-def get_all_tasks() -> list[Type[Task]]:
+def get_all_tasks() -> List[Type[Task]]:
     with Session(autoflush=False, bind=engine) as db:
         logging.info('get all tasks.')
         return db.query(Task).all()
 
-def get_all_open_tasks() -> list[Type[Task]]:
+def get_all_open_tasks() -> List[Type[Task]]:
     with Session(autoflush=False, bind=engine) as db:
         logging.info('get all open tasks.')
         return db.query(Task).filter(Task.done == False).all()
