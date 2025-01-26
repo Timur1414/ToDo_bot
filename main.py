@@ -158,7 +158,7 @@ def main():
             bot.send_message(chat_id, f'{task}')
 
     scheduler = BlockingScheduler(timezone='Europe/Moscow')
-    scheduler.add_job(run_scheduled_task, 'cron', hour=18, minute=30)
+    scheduler.add_job(run_scheduled_task, 'cron', hour=19, minute=32)
     def schedule_checker():
         logging.info('Scheduler started.')
         while True:
