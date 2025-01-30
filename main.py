@@ -122,9 +122,10 @@ def main():
         else:
             try:
                 title = cmd[1]
-                description = cmd[2]
-                start_time = None if len(cmd) < 4 else cmd[3]
-                end_time = None if len(cmd) < 5 else cmd[4]
+                description = cmd[2:]
+                description = ' '.join(description)
+                start_time = None
+                end_time = None
                 create_task(title, description, start_time, end_time)
                 bot.send_message(message.chat.id, 'Задача создана.')
                 logging.info('Task created.')
