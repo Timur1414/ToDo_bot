@@ -47,6 +47,9 @@ def main():
     @bot.message_handler(commands=['list'])
     def list_tasks(message):
         logging.info('Received /list command.')
+        if message.from_user.username != os.environ.get('MY_USERNAME'):
+            logging.warning('NOT ME!')
+            return
         tasks = get_all_open_tasks()
         bot.send_message(message.chat.id, f'Список задач ({len(tasks)}):')
         for task in tasks:
@@ -55,6 +58,9 @@ def main():
     @bot.message_handler(commands=['done'])
     def done_task(message):
         logging.info('Received /done command.')
+        if message.from_user.username != os.environ.get('MY_USERNAME'):
+            logging.warning('NOT ME!')
+            return
         cmd = message.text.split()
         if len(cmd) == 1:
             bot.send_message(message.chat.id, 'Введите /done <id задачи>')
@@ -75,6 +81,9 @@ def main():
     @bot.message_handler(commands=['open'])
     def open_task(message):
         logging.info('Received /open command.')
+        if message.from_user.username != os.environ.get('MY_USERNAME'):
+            logging.warning('NOT ME!')
+            return
         cmd = message.text.split()
         if len(cmd) == 1:
             bot.send_message(message.chat.id, 'Введите /open <id задачи>')
@@ -95,6 +104,9 @@ def main():
     @bot.message_handler(commands=['task'])
     def task(message):
         logging.info('Received /task command.')
+        if message.from_user.username != os.environ.get('MY_USERNAME'):
+            logging.warning('NOT ME!')
+            return
         cmd = message.text.split()
         if len(cmd) == 1:
             bot.send_message(message.chat.id, 'Введите /task <id задачи>')
@@ -106,7 +118,7 @@ def main():
                     raise ValueError
                 task = get_task(task_id)
                 bot.send_message(message.chat.id, task)
-                bot.send_message(message.chat.id,f'Description: {task.description}\nDone: {task.done}\nStart time: {task.start_time}\nEnd time: {task.end_time}')
+                bot.send_message(message.chat.id, f'Description: {task.description}\nDone: {task.done}\nStart time: {task.start_time}\nEnd time: {task.end_time}')
                 logging.info(f'Task {task_id} sent.')
             except (ValueError, AttributeError):
                 bot.send_message(message.chat.id, 'Некорректный id задачи.')
@@ -115,6 +127,9 @@ def main():
     @bot.message_handler(commands=['create'])
     def create(message):
         logging.info('Received /create command.')
+        if message.from_user.username != os.environ.get('MY_USERNAME'):
+            logging.warning('NOT ME!')
+            return
         cmd = message.text.split()
         if len(cmd) == 1:
             bot.send_message(message.chat.id, 'Введите /create <title> <description> [<start_time>] [<end_time>]')
@@ -159,6 +174,7 @@ def main():
 
     scheduler = BlockingScheduler(timezone='Europe/Moscow')
     scheduler.add_job(run_scheduled_task, 'cron', hour=20)
+
     def schedule_checker():
         logging.info('Scheduler started.')
         while True:
