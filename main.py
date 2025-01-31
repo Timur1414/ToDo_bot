@@ -105,7 +105,7 @@ def main():
     def task(message):
         logging.info('Received /task command.')
         if message.from_user.username != os.environ.get('MY_USERNAME'):
-            logging.warning(f'NOT ME!    {message.from_user.username}')
+            logging.warning(f'NOT ME!')
             return
         cmd = message.text.split()
         if len(cmd) == 1:
