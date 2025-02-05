@@ -183,7 +183,7 @@ def main():
 
     Thread(target=schedule_checker).start()
 
-    bot.polling(none_stop=True, interval=0)
+    bot.polling(non_stop=True, interval=0)
 
 
 if __name__ == '__main__':
